@@ -3,13 +3,19 @@
 #ifndef INCLUDE_THREAD_POOL_HPP_
 #define INCLUDE_THREAD_POOL_HPP_
 
+// Код из документации
+
 //Пул потоков — это коллекция рабочих потоков,
 //которые эффективно выполняют асинхронные обратные вызовы
 // от имени приложения.
 // Пул потоков в основном используется
 // для сокращения числа потоков приложения
 // и обеспечения управления рабочими потоками
+//Пул потоков принимает задачи из очереди
 
+//Thread Pool имеет очередь задач, из которой
+//каждый поток достаёт новую задачу при условии,
+//что очередь не пуста и поток свободен
 #include <vector>
 #include <queue>
 #include <memory>
@@ -31,12 +37,13 @@ class ThreadPool {
   ~ThreadPool();
  private:
   //нужно отслеживать потоки, чтобы мы могли присоединиться к ним
-  std::vector< std::thread > workers;
+  std::vector<std::thread> workers;
   // очередь задач
-  std::queue< std::function<void()> > tasks;
+  std::queue<std::function<void()>> tasks;
 
   // синхронизация
   std::mutex queue_mutex;
+  // используется для ожидания события
   std::condition_variable condition;
   bool stop;
 };
